@@ -200,7 +200,7 @@ function checkVoucher(forceCode = null) {
     
     const mikhmonUrl = brandConfig.mikhmonUrl;
     const session = brandConfig.mikhmonSession;
-    const url = `${mikhmonUrl}/status/index.php?session=${session}&nama=${code}&json=true`;
+    const url = `${mikhmonUrl}/api/check.php?session=${session}&nama=${code}`;
     
     fetch(url)
         .then(response => response.json())
