@@ -55,24 +55,24 @@ function handleDecodedText(decodedText) {
                     }
                 } else {
                     isUnauthorized = true;
-                    blockReason = "Invalid Hotspot Login URL";
+                    blockReason = getTranslation('qr_err_invalid_url');
                 }
             } else {
                 // ILLEGAL DOMAIN: Strict blocking
                 console.warn(`Blocked unauthorized domain: ${hostname}`);
                 isUnauthorized = true;
-                blockReason = `Unauthorized Domain: ${hostname}`;
+                blockReason = getTranslation('qr_err_unauthorized') + `: ${hostname}`;
             }
         } else {
             // NOT A URL: Block plain text / WiFi SSIDs per requirement
             isUnauthorized = true;
-            blockReason = "Invalid Content (Only URL allowed)";
+            blockReason = getTranslation('qr_err_invalid_content');
             console.warn("Blocked non-URL content:", decodedText);
         }
     } catch (e) {
         console.error("Error parsing QR URL:", e);
         isUnauthorized = true;
-        blockReason = "QR Parse Error";
+        blockReason = getTranslation('qr_err_parse');
     }
 
     // Fill inputs (only if authorized)

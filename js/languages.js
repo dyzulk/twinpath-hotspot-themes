@@ -50,7 +50,11 @@ const translations = {
         adv_msg: "Jika tidak terjadi apa-apa, buka iklan secara manual.",
         adv_link: "iklan",
         adv_manually: "secara manual",
-        powered_by: "Didukung oleh"
+        powered_by: "Didukung oleh",
+        qr_err_unauthorized: "Domain Tidak Sah",
+        qr_err_invalid_url: "URL Login Hotspot Tidak Sah",
+        qr_err_invalid_content: "Konten Tidak Sah (Hanya URL)",
+        qr_err_parse: "Gagal Membaca QR"
     },
     en: {
         lang_name: "English",
@@ -103,7 +107,11 @@ const translations = {
         adv_msg: "If nothing happens, open advertisement manually.",
         adv_link: "advertisement",
         adv_manually: "manually",
-        powered_by: "Powered by"
+        powered_by: "Powered by",
+        qr_err_unauthorized: "Unauthorized Domain",
+        qr_err_invalid_url: "Invalid Hotspot Login URL",
+        qr_err_invalid_content: "Invalid Content (Only URL allowed)",
+        qr_err_parse: "QR Parse Error"
     }
 };
 
@@ -153,6 +161,11 @@ window.addEventListener('click', (e) => {
 function initLanguage() {
     const savedLang = localStorage.getItem('twinpath_lang') || 'en';
     applyLanguage(savedLang);
+}
+
+function getTranslation(key) {
+    const lang = localStorage.getItem('twinpath_lang') || 'en';
+    return (translations[lang] && translations[lang][key]) ? translations[lang][key] : key;
 }
 
 document.addEventListener('DOMContentLoaded', initLanguage);
