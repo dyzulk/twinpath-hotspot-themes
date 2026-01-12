@@ -26,6 +26,7 @@ function handleDecodedText(decodedText) {
     
     let username = decodedText;
     let password = "";
+    let isUnauthorized = false;
     scannedUrl = "";
 
     // Check if result is a URL
@@ -36,8 +37,6 @@ function handleDecodedText(decodedText) {
             const currentHostname = window.location.hostname;
             
             // SECURITY CHECK: 
-            // 1. Fail-safe: Always allow current domain
-            // 2. Config: Allow domains in whitelist
             const isAllowed = (hostname === currentHostname) || (brandConfig.allowedDomains && brandConfig.allowedDomains.some(domain => 
                 hostname === domain || hostname.endsWith('.' + domain)
             ));
@@ -54,27 +53,37 @@ function handleDecodedText(decodedText) {
                     password = params.get('password');
                 }
             } else {
-                // Not in whitelist: Treat as plain text and warn user
+                // ILLEGAL DOMAIN: Strict blocking
                 console.warn(`Blocked unauthorized domain: ${hostname}`);
-                scannedUrl = ""; // Reset URL redirect
-                // Optionally: alert user or handle it as raw text
+                isUnauthorized = true;
+                username = hostname; // Show the blocked domain name
             }
         }
     } catch (e) {
         console.error("Error parsing QR URL:", e);
     }
 
-    // Fill inputs
-    const voucherInput = document.getElementById('voucher-input');
-    const passField = document.getElementById('voucher-pass');
-    if (voucherInput) voucherInput.value = username;
-    if (passField) passField.value = password || username;
+    // Fill inputs (only if authorized)
+    if (!isUnauthorized) {
+        const voucherInput = document.getElementById('voucher-input');
+        const passField = document.getElementById('voucher-pass');
+        if (voucherInput) voucherInput.value = username;
+        if (passField) passField.value = password || username;
+    }
 
     // Show confirmation overlay
     const overlay = document.getElementById('qr-confirm-overlay');
     const confirmUser = document.getElementById('confirm-user');
+    const connectBtn = document.querySelector('button[onclick="proceedSubmit()"]');
+    
     if (overlay && confirmUser) {
-        confirmUser.innerText = username;
+        if (isUnauthorized) {
+            confirmUser.innerHTML = `<span style="color: #ff4d4d;">Blocked: ${username}</span>`;
+            if (connectBtn) connectBtn.style.display = 'none';
+        } else {
+            confirmUser.innerText = username;
+            if (connectBtn) connectBtn.style.display = 'block';
+        }
         overlay.classList.remove('hidden');
     }
 
