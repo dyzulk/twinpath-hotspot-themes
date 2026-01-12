@@ -110,7 +110,10 @@ function openInExternalBrowser() {
 }
 
 function formatMikrotikTime(timeStr) {
-    if (!timeStr || timeStr === 'unlimited' || timeStr.includes('$(')) return timeStr;
+    if (!timeStr || timeStr === 'unlimited' || timeStr.includes('$(')) {
+        const lang = localStorage.getItem('twinpath_lang') || 'en';
+        return (translations[lang] && translations[lang]['unlimited']) || 'Unlimited';
+    }
 
     const regex = /(\d+)([wdhms])/g;
     let parts = [];
@@ -178,6 +181,15 @@ function updateProgressBars() {
     } else {
         const quotaBar = document.querySelector('.progress-quota');
         if (quotaBar) quotaBar.style.width = '100%'; // Unlimited
+    }
+
+    // Check for "Reached Limit" state
+    const isExpiredTime = limitUptime > 0 && uptime >= limitUptime;
+    const isExpiredQuota = limitBytes > 0 && bytesOut >= limitBytes;
+
+    if (isExpiredTime || isExpiredQuota) {
+        console.warn("User has reached limit!");
+        // We could add a label here, but MikroTik usually redirects/logs out automatically
     }
 }
 
