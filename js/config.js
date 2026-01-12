@@ -1,13 +1,13 @@
 const brandConfig = {
     brandName: "TwinpathNet",
     portalUrl: "http://welcome.dyzulk.com/login",
-    allowedDomains: [
-        "welcome.dyzulk.com"
-    ],
     creditName: "dyzulk.com",
     creditUrl: "https://dyzulk.com",
     mikhmonUrl: "https://mikhmon.dyzulk.com",
     mikhmonSession: "Twinpath-Net",
+    allowedDomains: [
+        "welcome.dyzulk.com"
+    ],
     assets: {
         logo: "img/logo-twinpath.svg",
         icon_ticket: "svg/ticket.svg",
