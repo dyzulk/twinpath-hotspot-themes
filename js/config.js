@@ -1,6 +1,11 @@
 const brandConfig = {
     brandName: "TwinpathNet",
     portalUrl: "http://welcome.dyzulk.com/login",
+    allowedDomains: [
+        "welcome.dyzulk.com", // Main Portal
+        "10.0.0.1",           // Default Gateway (Local IP)
+        "dyzulk.com"          // Custom Domain
+    ],
     creditName: "dyzulk.com",
     creditUrl: "https://dyzulk.com",
     assets: {

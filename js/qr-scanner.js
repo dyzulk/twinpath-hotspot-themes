@@ -28,19 +28,33 @@ function handleDecodedText(decodedText) {
     let password = "";
     scannedUrl = "";
 
-    // Check if result is a URL (common for Mikhmon vouchers)
+    // Check if result is a URL
     try {
         if (decodedText.startsWith('http://') || decodedText.startsWith('https://')) {
-            scannedUrl = decodedText; // Store for redirection
             const url = new URL(decodedText);
-            const searchParams = url.search || (decodedText.includes('?') ? '?' + decodedText.split('?')[1] : '');
-            const params = new URLSearchParams(searchParams);
+            const hostname = url.hostname;
             
-            if (params.has('username')) {
-                username = params.get('username');
-            }
-            if (params.has('password')) {
-                password = params.get('password');
+            // SECURITY CHECK: Check against Allowed Domains
+            const isAllowed = brandConfig.allowedDomains.some(domain => 
+                hostname === domain || hostname.endsWith('.' + domain)
+            );
+
+            if (isAllowed) {
+                scannedUrl = decodedText; // Store for redirection
+                const searchParams = url.search || (decodedText.includes('?') ? '?' + decodedText.split('?')[1] : '');
+                const params = new URLSearchParams(searchParams);
+                
+                if (params.has('username')) {
+                    username = params.get('username');
+                }
+                if (params.has('password')) {
+                    password = params.get('password');
+                }
+            } else {
+                // Not in whitelist: Treat as plain text and warn user
+                console.warn(`Blocked unauthorized domain: ${hostname}`);
+                scannedUrl = ""; // Reset URL redirect
+                // Optionally: alert user or handle it as raw text
             }
         }
     } catch (e) {
