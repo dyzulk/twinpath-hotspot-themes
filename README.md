@@ -66,7 +66,12 @@ const brandConfig = {
     brandName: "TwinpathNet",
     portalUrl: "http://h.twinpath.net", // Your Hotspot DNS Name
     mikhmonUrl: "https://mikhmon.dyzulk.com", // Your Mikhmon API URL
-    mikhmonSession: "Twinpath-Net" // Your Mikhmon Session Name
+    mikhmonSession: "Twinpath-Net", // Your Mikhmon Session Name
+    allowedDomains: [ // Whitelist Domains for QR Scanner
+        "h.twinpath.net",
+        "welcome.wifi.id",
+        "yourportal.net"
+    ]
 };
 ```
 
