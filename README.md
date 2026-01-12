@@ -9,12 +9,12 @@
       <img src="https://img.shields.io/github/v/release/dyzulk/twinpath-hotspot-themes?style=for-the-badge&logo=github&color=000000&labelColor=000000" alt="Release" />
     </a>
     <a href="#">
-      <img src="https://img.shields.io/badge/Mikrotik-RouterOS%20v7-000000?style=for-the-badge&logo=mikrotik&logoColor=white&labelColor=000000" alt="Mikrotik" />
+      <img src="https://img.shields.io/badge/Mikrotik-RouterOS%20v6-000000?style=for-the-badge&logo=mikrotik&logoColor=white&labelColor=000000" alt="Mikrotik" />
     </a>
     <a href="#">
       <img src="https://img.shields.io/badge/Design-Vercel%20Style-000000?style=for-the-badge&logo=vercel&logoColor=white&labelColor=000000" alt="Design System" />
     </a>
-    <a href="#">
+    <a href="LICENSE">
        <img src="https://img.shields.io/badge/License-MIT-000000?style=for-the-badge&labelColor=000000" alt="License" />
     </a>
   </p>
@@ -58,6 +58,7 @@ Built with a sleek, dark-mode-first prioritization. Minimalist aesthetics that f
 
 ## 🛠️ Configuration
 
+### 1. **Edit Config File**
 Open `js/config.js` to customize your brand:
 
 ```javascript
@@ -69,13 +70,45 @@ const brandConfig = {
 };
 ```
 
+### 2. **Walled Garden (Important!)**
+To ensure the **Voucher Check** feature works *before* users log in, you must allow access to your Mikhmon API domain in Mikrotik.
+
+Copy and paste this script into your Mikrotik Terminal:
+
+```mikrotik
+/ip hotspot walled-garden
+add dst-host=mikhmon.dyzulk.com comment="Allow Mikhmon API for Voucher Check"
+add dst-host=unpkg.com comment="Allow External Icons/Fonts (If used)"
+```
+*(Replace `mikhmon.dyzulk.com` with your actual Mikhmon domain)*
+
 ---
 
-## 📸 Screenshots
+## 📸 Gallery
+
+### **Desktop Experience**
+
+| **Login Screen** | **Voucher Check** |
+|:---:|:---:|
+| <img src="img/ss-desktop-01-login-voucher.png" width="100%" alt="Desktop Login"> | <img src="img/ss-desktop-03-login-ceck-validity.png" width="100%" alt="Desktop Check"> |
+| *Clean, focused login interface with Voucher & Member tabs.* | *Dedicated modal to verify voucher status/validity without logging in.* |
+
+| **Status Dashboard** |
+|:---:|
+| <img src="img/ss-desktop-04-status.png" width="100%" alt="Desktop Status"> |
+| *Rich post-login dashboard displaying real-time quota, validity, and greeting.* |
+
+
+### **Mobile Experience**
 
 <div align="center">
-  <img src="https://via.placeholder.com/800x450/000000/FFFFFF?text=Login+Screen" alt="Login Screen" width="48%" />
-  <img src="https://via.placeholder.com/800x450/000000/FFFFFF?text=Voucher+Check" alt="Voucher Check" width="48%" />
+  <img src="img/ss-mobile-01-login-voucher.png" width="30%" alt="Mobile Login" />
+  <img src="img/ss-mobile-03-login-check-validity.png" width="30%" alt="Mobile Check" />
+  <img src="img/ss-mobile-04-status.png" width="30%" alt="Mobile Status" />
+</div>
+
+<div align="center">
+  <small><b>Login</b> (Left) • <b>Voucher Check</b> (Center) • <b>Status Dashboard</b> (Right)</small>
 </div>
 
 ---
