@@ -59,9 +59,12 @@
             </div>
 
             <!-- Login Form -->
+            <!-- Login Form (Voucher & Member Only) -->
             <form name="login" action="$(link-login-only)" method="post" onsubmit="return doLogin()">
                 <input type="hidden" name="dst" value="$(link-orig)">
                 <input type="hidden" name="popup" value="true">
+                <!-- Hidden submit to capture Enter key on inputs -->
+                <input type="submit" style="display:none" />
 
                 <!-- Voucher Mode -->
                 <div id="voucher-mode">
@@ -96,38 +99,40 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Info/Check Mode -->
-                <div id="info-mode" class="hidden">
-                    <div class="input-group">
-                        <label class="input-label" data-i18n="info_label">Check Validity</label>
-                        <div class="input-wrapper">
-                            <img src="svg/search.svg" class="input-icon-img" alt="" data-asset="icon_search">
-                            <input type="text" id="info-input" class="input-field input-with-icon" data-i18n="voucher_placeholder" placeholder="Enter code to check...">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div style="display: grid; gap: 0.75rem;">
-                    <button type="submit" id="login-btn" class="btn btn-primary" data-i18n="login_voucher">Use Voucher</button>
-                    <button type="button" id="check-btn" class="btn btn-primary hidden" onclick="checkVoucher()" data-i18n="check_btn">Check Status</button>
-                    
-                    <button type="button" class="btn btn-outline" id="scan-btn" onclick="openQR(getActiveMode())">
-                        <img src="svg/scan-line.svg" width="16" height="16" alt="" data-asset="icon_scan" style="margin-right: 0.5rem; vertical-align: text-bottom;">
-                        <span data-i18n="scan_btn">Scan QR Code</span>
-                    </button>
-
-                    $(if trial == 'yes')
-                    <div style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: var(--fg-secondary);">
-                        <span data-i18n="or_text">Or</span>
-                        <button type="button" onclick="location.href='$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)'" class="btn btn-outline" style="margin-top: 0.5rem" data-i18n="trial_btn">
-                            Free Trial Access
-                        </button>
-                    </div>
-                    $(endif)
-                </div>
             </form>
+
+            <!-- Info/Check Mode (Outside Form) -->
+            <div id="info-mode" class="hidden">
+                <div class="input-group">
+                    <label class="input-label" data-i18n="info_label">Check Validity</label>
+                    <div class="input-wrapper">
+                        <img src="svg/search.svg" class="input-icon-img" alt="" data-asset="icon_search">
+                        <input type="text" id="info-input" class="input-field input-with-icon" data-i18n="voucher_placeholder" placeholder="Enter code to check...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons (Shared Grid) -->
+            <div style="display: grid; gap: 0.75rem;">
+                <!-- Login Button: Triggers Form Submit via JS -->
+                <button type="button" id="login-btn" class="btn btn-primary" data-i18n="login_voucher" onclick="if(doLogin()) document.login.submit()">Use Voucher</button>
+                
+                <button type="button" id="check-btn" class="btn btn-primary hidden" onclick="checkVoucher()" data-i18n="check_btn">Check Status</button>
+                
+                <button type="button" class="btn btn-outline" id="scan-btn" onclick="openQR(getActiveMode())">
+                    <img src="svg/scan-line.svg" width="16" height="16" alt="" data-asset="icon_scan" style="margin-right: 0.5rem; vertical-align: text-bottom;">
+                    <span data-i18n="scan_btn">Scan QR Code</span>
+                </button>
+
+                $(if trial == 'yes')
+                <div id="trial-container" style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: var(--fg-secondary);">
+                    <span data-i18n="or_text">Or</span>
+                    <button type="button" onclick="location.href='$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)'" class="btn btn-outline" style="margin-top: 0.5rem" data-i18n="trial_btn">
+                        Free Trial Access
+                    </button>
+                </div>
+                $(endif)
+            </div>
         </div>
 
         <!-- Pricing Section -->

@@ -24,13 +24,33 @@ function safeResume() {
 function handleDecodedText(decodedText) {
     console.log(`Scan result: ${decodedText}`);
     
+    // 1. Fast Path for CHECK MODE: Allow plain text and skip confirmation
+    if (activeScannerMode === 'check' || activeScannerMode === 'info') {
+        let code = decodedText;
+        try {
+            if (decodedText.startsWith('http://') || decodedText.startsWith('https://')) {
+                const url = new URL(decodedText);
+                code = url.searchParams.get('username') || decodedText;
+            }
+        } catch (e) {
+            code = decodedText;
+        }
+        
+        if (code) {
+            console.log("Check/Info mode: Direct completion for", code);
+            closeQR();
+            checkVoucher(code); // Trigger the API check modal
+            return;
+        }
+    }
+
     let username = "";
     let password = "";
     let isUnauthorized = false;
     let blockReason = ""; // Track why it was blocked
     scannedUrl = "";
 
-    // Check if result is a URL
+    // Check if result is a URL (STRICT for Login Mode)
     try {
         if (decodedText.startsWith('http://') || decodedText.startsWith('https://')) {
             const url = new URL(decodedText);
@@ -75,15 +95,8 @@ function handleDecodedText(decodedText) {
         blockReason = getTranslation('qr_err_parse');
     }
 
-    // Fill inputs (only if authorized)
+    // Fill inputs (only if authorized - Login Mode)
     if (!isUnauthorized && username) {
-        if (activeScannerMode === 'check') {
-            console.log("Check mode: Direct fetch for", username);
-            closeQR();
-            checkVoucher(username);
-            return;
-        }
-        
         const voucherInput = document.getElementById('voucher-input');
         const passField = document.getElementById('voucher-pass');
         if (voucherInput) voucherInput.value = username;

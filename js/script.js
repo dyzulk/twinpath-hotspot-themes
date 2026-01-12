@@ -5,10 +5,11 @@ function setMode(mode) {
     const tabs = document.querySelectorAll('.tab-btn');
     const loginBtn = document.getElementById('login-btn');
     const checkBtn = document.getElementById('check-btn');
+    const trialContainer = document.getElementById('trial-container');
     const form = document.login;
 
     // Reset visibility
-    [voucherMode, memberMode, infoMode, loginBtn, checkBtn].forEach(el => {
+    [voucherMode, memberMode, infoMode, loginBtn, checkBtn, trialContainer].forEach(el => {
         if (el) el.classList.add('hidden');
     });
     tabs.forEach(t => t.classList.remove('active'));
@@ -16,6 +17,7 @@ function setMode(mode) {
     if (mode === 'voucher') {
         if (voucherMode) voucherMode.classList.remove('hidden');
         if (loginBtn) loginBtn.classList.remove('hidden');
+        if (trialContainer) trialContainer.classList.remove('hidden');
         tabs[0].classList.add('active');
         if (form) {
             const code = document.getElementById('voucher-input').value;
@@ -25,6 +27,7 @@ function setMode(mode) {
     } else if (mode === 'member') {
         if (memberMode) memberMode.classList.remove('hidden');
         if (loginBtn) loginBtn.classList.remove('hidden');
+        if (trialContainer) trialContainer.classList.remove('hidden');
         tabs[1].classList.add('active');
         if (form) {
             form.username.value = document.getElementById('member-user').value;
@@ -33,6 +36,7 @@ function setMode(mode) {
     } else if (mode === 'info') {
         if (infoMode) infoMode.classList.remove('hidden');
         if (checkBtn) checkBtn.classList.remove('hidden');
+        // trialContainer remains hidden in info mode
         tabs[2].classList.add('active');
     }
 
@@ -252,6 +256,36 @@ function checkVoucher(forceCode = null) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'active') {
+                const lang = localStorage.getItem('twinpath_lang') || 'en';
+                let statusText = data.expired_at;
+                let statusColor = '#ff4d4d'; // Default red for expiration dates
+                let statusBg = 'rgba(255,77,77,0.1)';
+                let statusBorder = 'rgba(255,77,77,0.2)';
+
+                // Format logic
+                if (statusText === 'Active') {
+                    statusColor = '#50e3c2'; // Green
+                    statusBg = 'rgba(80, 227, 194, 0.1)';
+                    statusBorder = 'rgba(80, 227, 194, 0.2)';
+                } else {
+                    // Try to parse date: "jan/15/2026 00:37:47"
+                    const dateParts = statusText.match(/([a-z]+)\/(\d+)\/(\d+)\s+(\d+:\d+:\d+)/i);
+                    if (dateParts) {
+                        try {
+                            const [_, mStr, d, y, time] = dateParts;
+                            const months = { 'jan': 0, 'feb': 1, 'mar': 2, 'apr': 3, 'may': 4, 'jun': 5, 'jul': 6, 'aug': 7, 'sep': 8, 'oct': 9, 'nov': 10, 'dec': 11 };
+                            const dateObj = new Date(y, months[mStr.toLowerCase()], d);
+                            // Set time components manually if needed or just use date
+                            const [hh, mm, ss] = time.split(':');
+                            dateObj.setHours(hh, mm, ss);
+                            
+                            const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                            const formattedDate = new Intl.DateTimeFormat(lang === 'id' ? 'id-ID' : 'en-US', options).format(dateObj);
+                            statusText = formattedDate; // Just the date
+                        } catch (e) { console.error("Date parse error", e); }
+                    }
+                }
+
                 infoContent.innerHTML = `
                     <div class="confirm-item" style="margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
                         <span class="confirm-label" data-i18n="user_label">${getTranslation('user_label')}</span>
@@ -269,9 +303,9 @@ function checkVoucher(forceCode = null) {
                                 <div style="color: #fff; font-weight: 600;">${data.data_left}</div>
                             </div>
                         </div>
-                        <div style="margin-top: 15px; background: rgba(255,77,77,0.1); padding: 8px; border-radius: 4px; border: 1px solid rgba(255,77,77,0.2);">
-                            <div class="confirm-label" style="color: #ff4d4d;">EXPIRED AT</div>
-                            <div style="color: #ff4d4d; font-family: monospace; font-weight: bold;">${data.expired_at}</div>
+                        <div style="margin-top: 15px; background: ${statusBg}; padding: 8px; border-radius: 4px; border: 1px solid ${statusBorder};">
+                            <div class="confirm-label" style="color: ${statusColor};" data-i18n="status_label">STATUS</div>
+                            <div style="color: ${statusColor}; font-family: monospace; font-weight: bold;">${statusText}</div>
                         </div>
                     </div>
                 `;
@@ -361,6 +395,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // Handle Enter key for Voucher Check
+    const infoInput = document.getElementById('info-input');
+    if (infoInput) {
+        infoInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                checkVoucher(); // No form to prevent anymore
+            }
+        });
+    }
 });
 
 function togglePassword(inputId, button) {

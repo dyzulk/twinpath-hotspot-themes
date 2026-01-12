@@ -62,7 +62,8 @@ const translations = {
         check_not_found: "Voucher tidak ditemukan atau belum aktif.",
         check_expired: "Voucher sudah kadaluarsa.",
         check_valid_until: "Aktif sampai",
-        check_quota_remaining: "Sisa Kuota"
+        check_quota_remaining: "Sisa Kuota",
+        status_label: "STATUS"
     },
     en: {
         lang_name: "English",
@@ -127,7 +128,8 @@ const translations = {
         check_not_found: "Voucher not found or not active.",
         check_expired: "Voucher has expired.",
         check_valid_until: "Valid until",
-        check_quota_remaining: "Quota Remaining"
+        check_quota_remaining: "Quota Remaining",
+        status_label: "STATUS"
     }
 };
 
