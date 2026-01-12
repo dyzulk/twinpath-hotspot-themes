@@ -45,6 +45,20 @@ function setMode(mode) {
             loginBtn.innerText = translations[lang][key];
         }
     }
+
+    // Close any open modals when switching tabs
+    if (typeof closeQR === 'function') closeQR();
+    if (typeof closeVoucherInfo === 'function') closeVoucherInfo();
+}
+
+function getActiveMode() {
+    const tabs = document.querySelectorAll('.tab-btn');
+    if (tabs.length >= 3) {
+        if (tabs[0].classList.contains('active')) return 'voucher';
+        if (tabs[1].classList.contains('active')) return 'member';
+        if (tabs[2].classList.contains('active')) return 'info';
+    }
+    return 'voucher';
 }
 
 function doLogin() {
@@ -187,10 +201,33 @@ function updateProgressBars() {
     const isExpiredTime = limitUptime > 0 && uptime >= limitUptime;
     const isExpiredQuota = limitBytes > 0 && bytesOut >= limitBytes;
 
-    if (isExpiredTime || isExpiredQuota) {
-        console.warn("User has reached limit!");
-        // We could add a label here, but MikroTik usually redirects/logs out automatically
+    const timeRemainingContainer = document.querySelector('[data-i18n="time_left"]')?.parentElement?.querySelector('.value');
+    const quotaRemainingContainer = document.querySelector('[data-i18n="quota_left"]')?.parentElement?.querySelector('.value');
+    const lang = localStorage.getItem('twinpath_lang') || 'en';
+    const unlimitedLabel = (translations[lang] && translations[lang]['unlimited']) || 'Unlimited';
+
+    if (timeRemainingContainer) {
+        if (limitUptime === 0) {
+            timeRemainingContainer.innerText = unlimitedLabel;
+        } else if (isExpiredTime) {
+            timeRemainingContainer.innerText = "Reached Limit"; // Or add a translation key
+            timeRemainingContainer.style.color = "#ff4d4d";
+        }
     }
+
+    if (quotaRemainingContainer) {
+        if (limitBytes === 0) {
+            quotaRemainingContainer.innerText = unlimitedLabel;
+        } else if (isExpiredQuota) {
+            quotaRemainingContainer.innerText = "Reached Limit";
+            quotaRemainingContainer.style.color = "#ff4d4d";
+        }
+    }
+}
+
+function closeVoucherInfo() {
+    const modal = document.getElementById('voucher-info-modal');
+    if (modal) modal.classList.add('hidden');
 }
 
 function checkVoucher(forceCode = null) {
@@ -198,16 +235,13 @@ function checkVoucher(forceCode = null) {
     const code = forceCode || (input ? input.value.trim() : "");
     if (!code) return;
 
-    const overlay = document.getElementById('qr-confirm-overlay');
-    const confirmUser = document.getElementById('confirm-user');
-    const confirmMsg = document.querySelector('[data-i18n="confirm_msg"]');
-    const connectBtn = document.querySelector('button[onclick="proceedSubmit()"]');
+    const infoModal = document.getElementById('voucher-info-modal');
+    const infoContent = document.getElementById('voucher-info-content');
     
-    // Show loading state in overlay
-    if (overlay && confirmUser) {
-        confirmUser.innerText = getTranslation('check_loading');
-        if (connectBtn) connectBtn.style.display = 'none';
-        overlay.classList.remove('hidden');
+    // Show loading state
+    if (infoContent && infoModal) {
+        infoContent.innerHTML = `<div style="text-align:center; padding: 20px;">${getTranslation('check_loading')}</div>`;
+        infoModal.classList.remove('hidden');
     }
     
     const mikhmonUrl = brandConfig.mikhmonUrl;
@@ -218,37 +252,52 @@ function checkVoucher(forceCode = null) {
         .then(response => response.json())
         .then(data => {
             if (data.status === 'active') {
-                confirmUser.innerHTML = `
-                    <div style="font-size: 0.85rem; text-align: left; margin-top: 5px;">
-                        <div style="margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 4px; color: #50e3c2; font-weight: bold;">${data.profile}</div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                infoContent.innerHTML = `
+                    <div class="confirm-item" style="margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+                        <span class="confirm-label" data-i18n="user_label">${getTranslation('user_label')}</span>
+                        <span class="confirm-value">${data.user}</span>
+                    </div>
+                    <div style="font-size: 0.85rem; text-align: left;">
+                        <div style="margin-bottom: 12px; color: #50e3c2; font-weight: bold; font-family: var(--font-mono);">${data.profile}</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                             <div>
-                                <div style="font-size: 0.65rem; color: #888;">UPTIME</div>
-                                <div style="color: #fff;">${data.uptime}</div>
+                                <div class="confirm-label">UPTIME</div>
+                                <div style="color: #fff; font-weight: 600;">${data.uptime}</div>
                             </div>
                             <div>
-                                <div style="font-size: 0.65rem; color: #888;">QUOTA</div>
-                                <div style="color: #fff;">${data.data_left}</div>
+                                <div class="confirm-label">QUOTA</div>
+                                <div style="color: #fff; font-weight: 600;">${data.data_left}</div>
                             </div>
                         </div>
-                        <div style="margin-top: 10px;">
-                            <div style="font-size: 0.65rem; color: #888;">EXPIRED AT</div>
-                            <div style="color: #ff4d4d; font-family: monospace;">${data.expired_at}</div>
+                        <div style="margin-top: 15px; background: rgba(255,77,77,0.1); padding: 8px; border-radius: 4px; border: 1px solid rgba(255,77,77,0.2);">
+                            <div class="confirm-label" style="color: #ff4d4d;">EXPIRED AT</div>
+                            <div style="color: #ff4d4d; font-family: monospace; font-weight: bold;">${data.expired_at}</div>
                         </div>
                     </div>
                 `;
-                if (confirmMsg) confirmMsg.innerText = getTranslation('success_title');
             } else if (data.status === 'expired') {
-                confirmUser.innerHTML = `<span style="color: #ff4d4d;">${getTranslation('check_expired')}</span>`;
-                if (confirmMsg) confirmMsg.innerText = getTranslation('failed_title');
+                infoContent.innerHTML = `
+                    <div style="text-align:center; padding: 20px;">
+                        <span style="color: #ff4d4d; font-weight: bold; font-size: 1.1rem;">${getTranslation('check_expired')}</span>
+                        <div style="font-size: 0.8rem; color: #888; margin-top: 5px;">Reason: ${data.reason || 'Unknown'}</div>
+                    </div>
+                `;
             } else {
-                confirmUser.innerHTML = `<span style="color: #aaa;">${getTranslation('check_not_found')}</span>`;
-                if (confirmMsg) confirmMsg.innerText = getTranslation('failed_title');
+                infoContent.innerHTML = `
+                    <div style="text-align:center; padding: 20px;">
+                        <span style="color: #aaa; font-weight: bold;">${getTranslation('check_not_found')}</span>
+                    </div>
+                `;
             }
         })
         .catch(err => {
             console.error("AJAX Error:", err);
-            confirmUser.innerHTML = `<span style="color: #ff4d4d;">CORS/Connection Error</span><br><small style="font-size: 10px; color: #666;">Check Mikhmon Address & CORS</small>`;
+            infoContent.innerHTML = `
+                <div style="text-align:center; padding: 20px; color: #ff4d4d;">
+                    <strong>Connection Error</strong><br>
+                    <small style="font-size: 10px; color: #888;">Cannot reach Mikhmon API. Check CORS settings.</small>
+                </div>
+            `;
         });
 }
 

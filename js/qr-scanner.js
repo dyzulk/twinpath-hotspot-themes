@@ -77,21 +77,24 @@ function handleDecodedText(decodedText) {
 
     // Fill inputs (only if authorized)
     if (!isUnauthorized && username) {
+        if (activeScannerMode === 'check') {
+            console.log("Check mode: Direct fetch for", username);
+            closeQR();
+            checkVoucher(username);
+            return;
+        }
+        
         const voucherInput = document.getElementById('voucher-input');
         const passField = document.getElementById('voucher-pass');
         if (voucherInput) voucherInput.value = username;
         if (passField) passField.value = password || username;
     }
 
-    // Show confirmation overlay
+    // Show confirmation overlay (Login Mode only)
     const overlay = document.getElementById('qr-confirm-overlay');
     const confirmUser = document.getElementById('confirm-user');
     const connectBtn = document.querySelector('button[onclick="proceedSubmit()"]');
     const confirmMsg = document.querySelector('[data-i18n="confirm_msg"]');
-    
-    // Determine mode from active tab
-    const activeTab = document.querySelector('.tab-btn.active');
-    const isInfoMode = activeTab && activeTab.onclick.toString().includes('info');
 
     if (overlay && confirmUser) {
         if (isUnauthorized) {
@@ -101,13 +104,8 @@ function handleDecodedText(decodedText) {
             confirmUser.innerText = username;
             if (connectBtn) {
                 connectBtn.style.display = 'block';
-                if (isInfoMode) {
-                    connectBtn.innerText = getTranslation('check_btn');
-                    if (confirmMsg) confirmMsg.innerText = getTranslation('info_label');
-                } else {
-                    connectBtn.innerText = getTranslation('connect_btn');
-                    if (confirmMsg) confirmMsg.innerText = getTranslation('confirm_msg');
-                }
+                connectBtn.innerText = getTranslation('connect_btn');
+                if (confirmMsg) confirmMsg.innerText = getTranslation('confirm_msg');
             }
         }
         overlay.classList.remove('hidden');
@@ -237,7 +235,15 @@ function scanFromFile(event) {
 
 
 
-function openQR() {
+let activeScannerMode = 'login'; // 'login' or 'check'
+
+async function openQR(mode = 'login') {
+    activeScannerMode = mode;
+    console.log(`Opening QR Scanner in ${mode} mode`);
+    
+    // Hide confirmation overlay when opening scanner to prevent legacy results from showing
+    document.getElementById('qr-confirm-overlay').classList.add('hidden');
+    
     const modal = document.getElementById('qr-scanner-modal');
     modal.style.display = 'flex';
     

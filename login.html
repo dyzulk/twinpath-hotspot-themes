@@ -113,7 +113,7 @@
                     <button type="submit" id="login-btn" class="btn btn-primary" data-i18n="login_voucher">Use Voucher</button>
                     <button type="button" id="check-btn" class="btn btn-primary hidden" onclick="checkVoucher()" data-i18n="check_btn">Check Status</button>
                     
-                    <button type="button" class="btn btn-outline" id="scan-btn" onclick="openQR()">
+                    <button type="button" class="btn btn-outline" id="scan-btn" onclick="openQR(getActiveMode())">
                         <img src="svg/scan-line.svg" width="16" height="16" alt="" data-asset="icon_scan" style="margin-right: 0.5rem; vertical-align: text-bottom;">
                         <span data-i18n="scan_btn">Scan QR Code</span>
                     </button>
@@ -203,6 +203,20 @@
                     <button type="button" class="btn btn-outline" onclick="cancelConfirm()" data-i18n="try_again">Try Again</button>
                     <button type="button" class="btn btn-primary" onclick="proceedSubmit()" data-i18n="connect_btn">Connect</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Voucher Info Modal (Dedicated for results) -->
+    <div id="voucher-info-modal" class="modal hidden">
+        <div class="modal-content confirm-card">
+            <button class="close-modal" onclick="closeVoucherInfo()">×</button>
+            <h3 data-i18n="info_title">Voucher Details</h3>
+            <div id="voucher-info-content" class="confirm-details">
+                <!-- Dynamic content here -->
+            </div>
+            <div style="margin-top: 1.5rem;">
+                <button type="button" class="btn btn-primary" style="width: 100%" onclick="closeVoucherInfo()">OK</button>
             </div>
         </div>
     </div>
