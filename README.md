@@ -12,18 +12,18 @@ Professional, modern, and multi-themed captive portal templates for MikroTik Hot
 
 ### 1. Choose Your Theme
 Check out the available branches to find the theme that suits your brand:
-- `theme/premium-gold` (Current active theme: Gold accents with dark background)
+- `theme/modern-dark` (Current active theme: Vercel-style dark with teal accents)
 
 ### 2. Implementation
 It is highly recommended to use a specific **Tag** for a stable release:
 
-1. Clone using a stable tag (e.g., `gold-v1.0`):
+1. Clone using a stable tag (e.g., `v1.0-dark`):
    ```bash
-   git clone --branch gold-v1.0 https://github.com/dyzulk/twinpath-hotspot-themes.git
+   git clone --branch v1.0-dark https://github.com/dyzulk/twinpath-hotspot-themes.git
    ```
 2. Or, if you want the latest (possibly experimental) version of a branch:
    ```bash
-   git clone -b theme/premium-gold https://github.com/dyzulk/twinpath-hotspot-themes.git
+   git clone -b theme/modern-dark https://github.com/dyzulk/twinpath-hotspot-themes.git
    ```
 3. Upload the contents of the folder to your MikroTik **`flash/hotspot`** directory.
 
