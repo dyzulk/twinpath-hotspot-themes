@@ -24,9 +24,10 @@ function safeResume() {
 function handleDecodedText(decodedText) {
     console.log(`Scan result: ${decodedText}`);
     
-    let username = decodedText;
+    let username = "";
     let password = "";
     let isUnauthorized = false;
+    let blockReason = ""; // Track why it was blocked
     scannedUrl = "";
 
     // Check if result is a URL
@@ -36,35 +37,46 @@ function handleDecodedText(decodedText) {
             const hostname = url.hostname;
             const currentHostname = window.location.hostname;
             
-            // SECURITY CHECK: 
+            // SECURITY CHECK 1: Domain Whitelist
             const isAllowed = (hostname === currentHostname) || (brandConfig.allowedDomains && brandConfig.allowedDomains.some(domain => 
                 hostname === domain || hostname.endsWith('.' + domain)
             ));
 
             if (isAllowed) {
-                scannedUrl = decodedText; // Store for redirection
+                // SECURITY CHECK 2: MikroTik Standards (Must have at least username)
                 const searchParams = url.search || (decodedText.includes('?') ? '?' + decodedText.split('?')[1] : '');
                 const params = new URLSearchParams(searchParams);
                 
                 if (params.has('username')) {
+                    scannedUrl = decodedText; // Approved for redirection
                     username = params.get('username');
-                }
-                if (params.has('password')) {
-                    password = params.get('password');
+                    if (params.has('password')) {
+                        password = params.get('password');
+                    }
+                } else {
+                    isUnauthorized = true;
+                    blockReason = "Invalid MikroTik Login URL";
                 }
             } else {
                 // ILLEGAL DOMAIN: Strict blocking
                 console.warn(`Blocked unauthorized domain: ${hostname}`);
                 isUnauthorized = true;
-                username = hostname; // Show the blocked domain name
+                blockReason = `Unauthorized Domain: ${hostname}`;
             }
+        } else {
+            // NOT A URL: Block plain text / WiFi SSIDs per requirement
+            isUnauthorized = true;
+            blockReason = "Invalid Content (Only URL allowed)";
+            console.warn("Blocked non-URL content:", decodedText);
         }
     } catch (e) {
         console.error("Error parsing QR URL:", e);
+        isUnauthorized = true;
+        blockReason = "QR Parse Error";
     }
 
     // Fill inputs (only if authorized)
-    if (!isUnauthorized) {
+    if (!isUnauthorized && username) {
         const voucherInput = document.getElementById('voucher-input');
         const passField = document.getElementById('voucher-pass');
         if (voucherInput) voucherInput.value = username;
@@ -78,7 +90,7 @@ function handleDecodedText(decodedText) {
     
     if (overlay && confirmUser) {
         if (isUnauthorized) {
-            confirmUser.innerHTML = `<span style="color: #ff4d4d;">Blocked: ${username}</span>`;
+            confirmUser.innerHTML = `<span style="color: #ff4d4d;">Blocked: ${blockReason}</span>`;
             if (connectBtn) connectBtn.style.display = 'none';
         } else {
             confirmUser.innerText = username;
