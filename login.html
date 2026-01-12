@@ -28,134 +28,136 @@
             </div>
         </div>
 
-        <!-- Header -->
-        <header class="header">
-            <img src="img/logo-twinpath.svg" alt="" data-asset="logo" data-brand-name class="logo-img">
-            <div class="status-badge">
-                <span style="color: #50e3c2">●</span> <span data-i18n="operational">Operational</span>
-            </div>
-        </header>
-
-        <!-- Main Card -->
-        <div class="card">
-            <!-- TwinpathNet Error Message (Only shows if error exists) -->
-            $(if error)
-            <div style="color: #ff4d4d; margin-bottom: 1rem; font-size: 0.875rem; text-align: center;">
-                $(error)
-            </div>
-            $(endif)
-
-            <!-- Tabs -->
-            <div class="tabs">
-                <div class="tab-btn active" onclick="setMode('voucher')">
-                    <img src="svg/ticket.svg" alt="" data-asset="icon_ticket"> <span data-i18n="tab_voucher">Voucher</span>
+        <!-- Main Content Wrapper -->
+        <main class="content-wrapper">
+            <!-- Header -->
+            <header class="header">
+                <img src="img/logo-twinpath.svg" alt="" data-asset="logo" data-brand-name class="logo-img">
+                <div class="status-badge">
+                    <span style="color: #50e3c2">●</span> <span data-i18n="operational">Operational</span>
                 </div>
-                <div class="tab-btn" onclick="setMode('member')">
-                    <img src="svg/user.svg" alt="" data-asset="icon_user"> <span data-i18n="tab_member">Member</span>
-                </div>
-                <div class="tab-btn" onclick="setMode('info')">
-                    <img src="svg/clock.svg" alt="" data-asset="icon_clock"> <span data-i18n="tab_info">Info</span>
-                </div>
-            </div>
+            </header>
 
-            <!-- Login Form -->
-            <!-- Login Form (Voucher & Member Only) -->
-            <form name="login" action="$(link-login-only)" method="post" onsubmit="return doLogin()">
-                <input type="hidden" name="dst" value="$(link-orig)">
-                <input type="hidden" name="popup" value="true">
-                <!-- Hidden submit to capture Enter key on inputs -->
-                <input type="submit" style="display:none" />
-
-                <!-- Voucher Mode -->
-                <div id="voucher-mode">
-                    <div class="input-group">
-                        <label class="input-label" data-i18n="voucher_label">Voucher Code</label>
-                        <div class="input-wrapper">
-                            <img src="svg/ticket.svg" class="input-icon-img" alt="" data-asset="icon_ticket">
-                            <input type="text" name="username" id="voucher-input" class="input-field input-with-icon" data-i18n="voucher_placeholder" placeholder="Enter code received..." value="$(username)">
-                        </div>
-                        <!-- Hide password field for voucher (username=password) -->
-                        <input type="hidden" name="password" id="voucher-pass">
-                    </div>
-                </div>
-
-                <!-- Member Mode -->
-                <div id="member-mode" class="hidden">
-                    <div class="input-group">
-                        <label class="input-label" data-i18n="user_label">Username</label>
-                        <div class="input-wrapper">
-                            <img src="svg/user.svg" class="input-icon-img" alt="" data-asset="icon_user">
-                            <input type="text" id="member-user" class="input-field input-with-icon" placeholder="username">
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label class="input-label" data-i18n="pass_label">Password</label>
-                        <div class="input-wrapper">
-                            <img src="svg/lock.svg" class="input-icon-img" alt="" data-asset="icon_lock">
-                            <input type="password" id="member-pass" class="input-field input-with-icon input-with-toggle" placeholder="••••••••">
-                            <button type="button" class="password-toggle" onclick="togglePassword('member-pass', this)">
-                                <img src="svg/eye.svg" alt="" id="toggle-icon-member-pass">
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </form>
-
-            <!-- Info/Check Mode (Outside Form) -->
-            <div id="info-mode" class="hidden">
-                <div class="input-group">
-                    <label class="input-label" data-i18n="info_label">Check Validity</label>
-                    <div class="input-wrapper">
-                        <img src="svg/search.svg" class="input-icon-img" alt="" data-asset="icon_search">
-                        <input type="text" id="info-input" class="input-field input-with-icon" data-i18n="voucher_placeholder" placeholder="Enter code to check...">
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Buttons (Shared Grid) -->
-            <div style="display: grid; gap: 0.75rem;">
-                <!-- Login Button: Triggers Form Submit via JS -->
-                <button type="button" id="login-btn" class="btn btn-primary" data-i18n="login_voucher" onclick="if(doLogin()) document.login.submit()">Use Voucher</button>
-                
-                <button type="button" id="check-btn" class="btn btn-primary hidden" onclick="checkVoucher()" data-i18n="check_btn">Check Status</button>
-                
-                <button type="button" class="btn btn-outline" id="scan-btn" onclick="openQR(getActiveMode())">
-                    <img src="svg/scan-line.svg" width="16" height="16" alt="" data-asset="icon_scan" style="margin-right: 0.5rem; vertical-align: text-bottom;">
-                    <span data-i18n="scan_btn">Scan QR Code</span>
-                </button>
-
-                $(if trial == 'yes')
-                <div id="trial-container" style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: var(--fg-secondary);">
-                    <span data-i18n="or_text">Or</span>
-                    <button type="button" onclick="location.href='$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)'" class="btn btn-outline" style="margin-top: 0.5rem" data-i18n="trial_btn">
-                        Free Trial Access
-                    </button>
+            <!-- Main Card -->
+            <div class="card">
+                <!-- TwinpathNet Error Message (Only shows if error exists) -->
+                $(if error)
+                <div style="color: #ff4d4d; margin-bottom: 1rem; font-size: 0.875rem; text-align: center;">
+                    $(error)
                 </div>
                 $(endif)
-            </div>
-        </div>
 
-        <!-- Pricing Section -->
-        <div>
-            <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--fg-secondary);" data-i18n="pricing_title">Available Packages</h3>
-            <div class="pricing-grid">
-                <!-- Paket 1 -->
-                <div class="pricing-card">
-                    <div class="duration">3 <span data-i18n="hours">HOURS</span></div>
-                    <div class="price">2K</div>
+                <!-- Tabs -->
+                <div class="tabs">
+                    <div class="tab-btn active" onclick="setMode('voucher')">
+                        <img src="svg/ticket.svg" alt="" data-asset="icon_ticket"> <span data-i18n="tab_voucher">Voucher</span>
+                    </div>
+                    <div class="tab-btn" onclick="setMode('member')">
+                        <img src="svg/user.svg" alt="" data-asset="icon_user"> <span data-i18n="tab_member">Member</span>
+                    </div>
+                    <div class="tab-btn" onclick="setMode('info')">
+                        <img src="svg/clock.svg" alt="" data-asset="icon_clock"> <span data-i18n="tab_info">Info</span>
+                    </div>
                 </div>
-                <!-- Paket 2 -->
-                <div class="pricing-card">
-                    <div class="duration">1 <span data-i18n="day">DAY</span></div>
-                    <div class="price">5K</div>
+
+                <!-- Login Form (Voucher & Member Only) -->
+                <form name="login" action="$(link-login-only)" method="post" onsubmit="return doLogin()">
+                    <input type="hidden" name="dst" value="$(link-orig)">
+                    <input type="hidden" name="popup" value="true">
+                    <!-- Hidden submit to capture Enter key on inputs -->
+                    <input type="submit" style="display:none" />
+
+                    <!-- Voucher Mode -->
+                    <div id="voucher-mode">
+                        <div class="input-group">
+                            <label class="input-label" data-i18n="voucher_label">Voucher Code</label>
+                            <div class="input-wrapper">
+                                <img src="svg/ticket.svg" class="input-icon-img" alt="" data-asset="icon_ticket">
+                                <input type="text" name="username" id="voucher-input" class="input-field input-with-icon" data-i18n="voucher_placeholder" placeholder="Enter code received..." value="$(username)">
+                            </div>
+                            <!-- Hide password field for voucher (username=password) -->
+                            <input type="hidden" name="password" id="voucher-pass">
+                        </div>
+                    </div>
+
+                    <!-- Member Mode -->
+                    <div id="member-mode" class="hidden">
+                        <div class="input-group">
+                            <label class="input-label" data-i18n="user_label">Username</label>
+                            <div class="input-wrapper">
+                                <img src="svg/user.svg" class="input-icon-img" alt="" data-asset="icon_user">
+                                <input type="text" id="member-user" class="input-field input-with-icon" placeholder="username">
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <label class="input-label" data-i18n="pass_label">Password</label>
+                            <div class="input-wrapper">
+                                <img src="svg/lock.svg" class="input-icon-img" alt="" data-asset="icon_lock">
+                                <input type="password" id="member-pass" class="input-field input-with-icon input-with-toggle" placeholder="••••••••">
+                                <button type="button" class="password-toggle" onclick="togglePassword('member-pass', this)">
+                                    <img src="svg/eye.svg" alt="" id="toggle-icon-member-pass">
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Info/Check Mode (Outside Form) -->
+                <div id="info-mode" class="hidden">
+                    <div class="input-group">
+                        <label class="input-label" data-i18n="info_label">Check Validity</label>
+                        <div class="input-wrapper">
+                            <img src="svg/search.svg" class="input-icon-img" alt="" data-asset="icon_search">
+                            <input type="text" id="info-input" class="input-field input-with-icon" data-i18n="voucher_placeholder" placeholder="Enter code to check...">
+                        </div>
+                    </div>
                 </div>
-                <!-- Paket 3 -->
-                <div class="pricing-card">
-                    <div class="duration">1 <span data-i18n="week">WEEK</span></div>
-                    <div class="price">10K</div>
+
+                <!-- Action Buttons (Shared Grid) -->
+                <div style="display: grid; gap: 0.75rem;">
+                    <!-- Login Button: Triggers Form Submit via JS -->
+                    <button type="button" id="login-btn" class="btn btn-primary" data-i18n="login_voucher" onclick="if(doLogin()) document.login.submit()">Use Voucher</button>
+                    
+                    <button type="button" id="check-btn" class="btn btn-primary hidden" onclick="checkVoucher()" data-i18n="check_btn">Check Status</button>
+                    
+                    <button type="button" class="btn btn-outline" id="scan-btn" onclick="openQR(getActiveMode())">
+                        <img src="svg/scan-line.svg" width="16" height="16" alt="" data-asset="icon_scan" style="margin-right: 0.5rem; vertical-align: text-bottom;">
+                        <span data-i18n="scan_btn">Scan QR Code</span>
+                    </button>
+
+                    $(if trial == 'yes')
+                    <div id="trial-container" style="text-align: center; margin-top: 0.5rem; font-size: 0.8rem; color: var(--fg-secondary);">
+                        <span data-i18n="or_text">Or</span>
+                        <button type="button" onclick="location.href='$(link-login-only)?dst=$(link-orig-esc)&amp;username=T-$(mac-esc)'" class="btn btn-outline" style="margin-top: 0.5rem" data-i18n="trial_btn">
+                            Free Trial Access
+                        </button>
+                    </div>
+                    $(endif)
                 </div>
             </div>
-        </div>
+
+            <!-- Pricing Section -->
+            <div>
+                <h3 style="font-size: 1rem; margin-bottom: 1rem; color: var(--fg-secondary);" data-i18n="pricing_title">Available Packages</h3>
+                <div class="pricing-grid">
+                    <!-- Paket 1 -->
+                    <div class="pricing-card">
+                        <div class="duration">3 <span data-i18n="hours">HOURS</span></div>
+                        <div class="price">2K</div>
+                    </div>
+                    <!-- Paket 2 -->
+                    <div class="pricing-card">
+                        <div class="duration">1 <span data-i18n="day">DAY</span></div>
+                        <div class="price">5K</div>
+                    </div>
+                    <!-- Paket 3 -->
+                    <div class="pricing-card">
+                        <div class="duration">1 <span data-i18n="week">WEEK</span></div>
+                        <div class="price">10K</div>
+                    </div>
+                </div>
+            </div>
+        </main>
 
         <footer>
             <p><span data-i18n="powered_by">Powered by</span> <span data-brand-name></span> • <a href="#" data-brand-link="credit" target="_blank" data-brand-credit></a></p>
