@@ -55,7 +55,7 @@ function handleDecodedText(decodedText) {
                     }
                 } else {
                     isUnauthorized = true;
-                    blockReason = "Invalid MikroTik Login URL";
+                    blockReason = "Invalid Hotspot Login URL";
                 }
             } else {
                 // ILLEGAL DOMAIN: Strict blocking
