@@ -33,11 +33,14 @@ function handleDecodedText(decodedText) {
         if (decodedText.startsWith('http://') || decodedText.startsWith('https://')) {
             const url = new URL(decodedText);
             const hostname = url.hostname;
+            const currentHostname = window.location.hostname;
             
-            // SECURITY CHECK: Check against Allowed Domains
-            const isAllowed = brandConfig.allowedDomains.some(domain => 
+            // SECURITY CHECK: 
+            // 1. Fail-safe: Always allow current domain
+            // 2. Config: Allow domains in whitelist
+            const isAllowed = (hostname === currentHostname) || (brandConfig.allowedDomains && brandConfig.allowedDomains.some(domain => 
                 hostname === domain || hostname.endsWith('.' + domain)
-            );
+            ));
 
             if (isAllowed) {
                 scannedUrl = decodedText; // Store for redirection
