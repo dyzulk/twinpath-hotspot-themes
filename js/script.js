@@ -1,38 +1,43 @@
 function setMode(mode) {
     const voucherMode = document.getElementById('voucher-mode');
     const memberMode = document.getElementById('member-mode');
-    const voucherTab = document.querySelector('.tab-btn:nth-child(1)');
-    const memberTab = document.querySelector('.tab-btn:nth-child(2)');
+    const infoMode = document.getElementById('info-mode');
+    const tabs = document.querySelectorAll('.tab-btn');
+    const loginBtn = document.getElementById('login-btn');
+    const checkBtn = document.getElementById('check-btn');
     const form = document.login;
 
+    // Reset visibility
+    [voucherMode, memberMode, infoMode, loginBtn, checkBtn].forEach(el => {
+        if (el) el.classList.add('hidden');
+    });
+    tabs.forEach(t => t.classList.remove('active'));
+
     if (mode === 'voucher') {
-        voucherMode.classList.remove('hidden');
-        memberMode.classList.add('hidden');
-        voucherTab.classList.add('active');
-        memberTab.classList.remove('active');
-        
-        // Sync to form immediately
+        if (voucherMode) voucherMode.classList.remove('hidden');
+        if (loginBtn) loginBtn.classList.remove('hidden');
+        tabs[0].classList.add('active');
         if (form) {
             const code = document.getElementById('voucher-input').value;
             form.username.value = code;
             form.password.value = document.getElementById('voucher-pass').value || code;
         }
-    } else {
-        voucherMode.classList.add('hidden');
-        memberMode.classList.remove('hidden');
-        voucherTab.classList.remove('active');
-        memberTab.classList.add('active');
-        
-        // Sync to form immediately
+    } else if (mode === 'member') {
+        if (memberMode) memberMode.classList.remove('hidden');
+        if (loginBtn) loginBtn.classList.remove('hidden');
+        tabs[1].classList.add('active');
         if (form) {
             form.username.value = document.getElementById('member-user').value;
             form.password.value = document.getElementById('member-pass').value;
         }
+    } else if (mode === 'info') {
+        if (infoMode) infoMode.classList.remove('hidden');
+        if (checkBtn) checkBtn.classList.remove('hidden');
+        tabs[2].classList.add('active');
     }
 
-    // Update login button text based on mode
-    const loginBtn = document.getElementById('login-btn');
-    if (loginBtn) {
+    // Update login button text based on mode (only for voucher/member)
+    if (loginBtn && (mode === 'voucher' || mode === 'member')) {
         const lang = localStorage.getItem('twinpath_lang') || 'en';
         const key = mode === 'voucher' ? 'login_voucher' : 'login_member';
         loginBtn.setAttribute('data-i18n', key);
@@ -174,6 +179,65 @@ function updateProgressBars() {
         const quotaBar = document.querySelector('.progress-quota');
         if (quotaBar) quotaBar.style.width = '100%'; // Unlimited
     }
+}
+
+function checkVoucher(forceCode = null) {
+    const input = document.getElementById('info-input');
+    const code = forceCode || (input ? input.value.trim() : "");
+    if (!code) return;
+
+    const overlay = document.getElementById('qr-confirm-overlay');
+    const confirmUser = document.getElementById('confirm-user');
+    const confirmMsg = document.querySelector('[data-i18n="confirm_msg"]');
+    const connectBtn = document.querySelector('button[onclick="proceedSubmit()"]');
+    
+    // Show loading state in overlay
+    if (overlay && confirmUser) {
+        confirmUser.innerText = getTranslation('check_loading');
+        if (connectBtn) connectBtn.style.display = 'none';
+        overlay.classList.remove('hidden');
+    }
+    
+    const mikhmonUrl = brandConfig.mikhmonUrl;
+    const session = brandConfig.mikhmonSession;
+    const url = `${mikhmonUrl}/status/index.php?session=${session}&nama=${code}&json=true`;
+    
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'active') {
+                confirmUser.innerHTML = `
+                    <div style="font-size: 0.85rem; text-align: left; margin-top: 5px;">
+                        <div style="margin-bottom: 8px; border-bottom: 1px solid #333; padding-bottom: 4px; color: #50e3c2; font-weight: bold;">${data.profile}</div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                            <div>
+                                <div style="font-size: 0.65rem; color: #888;">UPTIME</div>
+                                <div style="color: #fff;">${data.uptime}</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 0.65rem; color: #888;">QUOTA</div>
+                                <div style="color: #fff;">${data.data_left}</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <div style="font-size: 0.65rem; color: #888;">EXPIRED AT</div>
+                            <div style="color: #ff4d4d; font-family: monospace;">${data.expired_at}</div>
+                        </div>
+                    </div>
+                `;
+                if (confirmMsg) confirmMsg.innerText = getTranslation('success_title');
+            } else if (data.status === 'expired') {
+                confirmUser.innerHTML = `<span style="color: #ff4d4d;">${getTranslation('check_expired')}</span>`;
+                if (confirmMsg) confirmMsg.innerText = getTranslation('failed_title');
+            } else {
+                confirmUser.innerHTML = `<span style="color: #aaa;">${getTranslation('check_not_found')}</span>`;
+                if (confirmMsg) confirmMsg.innerText = getTranslation('failed_title');
+            }
+        })
+        .catch(err => {
+            console.error("AJAX Error:", err);
+            confirmUser.innerHTML = `<span style="color: #ff4d4d;">CORS/Connection Error</span><br><small style="font-size: 10px; color: #666;">Check Mikhmon Address & CORS</small>`;
+        });
 }
 
 function initDashboard() {

@@ -87,14 +87,28 @@ function handleDecodedText(decodedText) {
     const overlay = document.getElementById('qr-confirm-overlay');
     const confirmUser = document.getElementById('confirm-user');
     const connectBtn = document.querySelector('button[onclick="proceedSubmit()"]');
+    const confirmMsg = document.querySelector('[data-i18n="confirm_msg"]');
     
+    // Determine mode from active tab
+    const activeTab = document.querySelector('.tab-btn.active');
+    const isInfoMode = activeTab && activeTab.onclick.toString().includes('info');
+
     if (overlay && confirmUser) {
         if (isUnauthorized) {
             confirmUser.innerHTML = `<span style="color: #ff4d4d;">Blocked: ${blockReason}</span>`;
             if (connectBtn) connectBtn.style.display = 'none';
         } else {
             confirmUser.innerText = username;
-            if (connectBtn) connectBtn.style.display = 'block';
+            if (connectBtn) {
+                connectBtn.style.display = 'block';
+                if (isInfoMode) {
+                    connectBtn.innerText = getTranslation('check_btn');
+                    if (confirmMsg) confirmMsg.innerText = getTranslation('info_label');
+                } else {
+                    connectBtn.innerText = getTranslation('connect_btn');
+                    if (confirmMsg) confirmMsg.innerText = getTranslation('confirm_msg');
+                }
+            }
         }
         overlay.classList.remove('hidden');
     }
@@ -111,6 +125,17 @@ function cancelConfirm() {
 }
 
 function proceedSubmit() {
+    // Determine mode from active tab
+    const activeTab = document.querySelector('.tab-btn.active');
+    const isInfoMode = activeTab && activeTab.onclick.toString().includes('info');
+
+    if (isInfoMode) {
+        const username = document.getElementById('confirm-user').innerText;
+        checkVoucher(username);
+        closeQR();
+        return;
+    }
+
     // If it's a URL, redirect directly
     if (scannedUrl) {
         console.log("Redirecting to scanned URL:", scannedUrl);

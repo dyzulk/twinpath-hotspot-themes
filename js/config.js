@@ -2,12 +2,12 @@ const brandConfig = {
     brandName: "TwinpathNet",
     portalUrl: "http://welcome.dyzulk.com/login",
     allowedDomains: [
-        "welcome.dyzulk.com", // Main Portal
-        "10.0.0.1",           // Default Gateway (Local IP)
-        "dyzulk.com"          // Custom Domain
+        "welcome.dyzulk.com"
     ],
     creditName: "dyzulk.com",
     creditUrl: "https://dyzulk.com",
+    mikhmonUrl: "https://mikhmon.dyzulk.com",
+    mikhmonSession: "Twinpath-Net",
     assets: {
         logo: "img/logo-twinpath.svg",
         icon_ticket: "svg/ticket.svg",
@@ -23,7 +23,8 @@ const brandConfig = {
         icon_clock: "svg/clock.svg",
         icon_upload: "svg/upload-cloud.svg",
         icon_download: "svg/download-cloud.svg",
-        icon_wifi: "svg/wifi.svg"
+        icon_wifi: "svg/wifi.svg",
+        icon_search: "svg/search.svg"
     }
 };
 

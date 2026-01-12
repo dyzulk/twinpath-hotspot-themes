@@ -53,6 +53,9 @@
                 <div class="tab-btn" onclick="setMode('member')">
                     <img src="svg/user.svg" alt="" data-asset="icon_user"> <span data-i18n="tab_member">Member</span>
                 </div>
+                <div class="tab-btn" onclick="setMode('info')">
+                    <img src="svg/clock.svg" alt="" data-asset="icon_clock"> <span data-i18n="tab_info">Info</span>
+                </div>
             </div>
 
             <!-- Login Form -->
@@ -94,11 +97,23 @@
                     </div>
                 </div>
 
+                <!-- Info/Check Mode -->
+                <div id="info-mode" class="hidden">
+                    <div class="input-group">
+                        <label class="input-label" data-i18n="info_label">Check Validity</label>
+                        <div class="input-wrapper">
+                            <img src="svg/search.svg" class="input-icon-img" alt="" data-asset="icon_search">
+                            <input type="text" id="info-input" class="input-field input-with-icon" data-i18n="voucher_placeholder" placeholder="Enter code to check...">
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Action Buttons -->
                 <div style="display: grid; gap: 0.75rem;">
                     <button type="submit" id="login-btn" class="btn btn-primary" data-i18n="login_voucher">Use Voucher</button>
+                    <button type="button" id="check-btn" class="btn btn-primary hidden" onclick="checkVoucher()" data-i18n="check_btn">Check Status</button>
                     
-                    <button type="button" class="btn btn-outline" onclick="openQR()">
+                    <button type="button" class="btn btn-outline" id="scan-btn" onclick="openQR()">
                         <img src="svg/scan-line.svg" width="16" height="16" alt="" data-asset="icon_scan" style="margin-right: 0.5rem; vertical-align: text-bottom;">
                         <span data-i18n="scan_btn">Scan QR Code</span>
                     </button>

@@ -54,7 +54,15 @@ const translations = {
         qr_err_unauthorized: "Domain Tidak Sah",
         qr_err_invalid_url: "URL Login Hotspot Tidak Sah",
         qr_err_invalid_content: "Konten Tidak Sah (Hanya URL)",
-        qr_err_parse: "Gagal Membaca QR"
+        qr_err_parse: "Gagal Membaca QR",
+        tab_info: "Info",
+        info_label: "Cek Masa Aktif",
+        check_btn: "Cek Status",
+        check_loading: "Mengecek voucher...",
+        check_not_found: "Voucher tidak ditemukan atau belum aktif.",
+        check_expired: "Voucher sudah kadaluarsa.",
+        check_valid_until: "Aktif sampai",
+        check_quota_remaining: "Sisa Kuota"
     },
     en: {
         lang_name: "English",
@@ -111,7 +119,15 @@ const translations = {
         qr_err_unauthorized: "Unauthorized Domain",
         qr_err_invalid_url: "Invalid Hotspot Login URL",
         qr_err_invalid_content: "Invalid Content (Only URL allowed)",
-        qr_err_parse: "QR Parse Error"
+        qr_err_parse: "QR Parse Error",
+        tab_info: "Info",
+        info_label: "Check Validity",
+        check_btn: "Check Status",
+        check_loading: "Checking voucher...",
+        check_not_found: "Voucher not found or not active.",
+        check_expired: "Voucher has expired.",
+        check_valid_until: "Valid until",
+        check_quota_remaining: "Quota Remaining"
     }
 };
 
