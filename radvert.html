@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="js/languages.js"></script>
+<meta http-equiv="refresh" content="2; url=$(link-orig)">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />   
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="expires" content="-1">
+<title>Advertisement</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/config.js"></script>
+<script>
+    var popup = '';
+    function openOrig() {
+	if (window.focus) popup.focus();
+	location.href = unescape('$(link-orig-esc)');
+    }
+    function openAd() {
+	location.href = unescape('$(link-redirect-esc)');
+    }
+    function openAdvert() {
+	if (window.name != 'hotspot_advert') {
+		popup = open('$(link-redirect)', 'hotspot_advert', '');
+		setTimeout("openOrig()", 1000);
+		return;
+	}
+	setTimeout("openAd()", 1000);
+    }
+</script>
+</head>
+<body onLoad="openAdvert()">
+    <div class="container" style="text-align: center;">
+        <!-- Header -->
+        <header class="header">
+            <img src="img/logo-twinpath.svg" alt="" data-asset="logo" data-brand-name class="logo-img">
+        </header>
+        <!-- Custom Language Dropdown -->
+        <div class="lang-dropdown">
+            <div class="lang-btn" onclick="toggleLangMenu()">
+                <img src="svg/languages.svg" alt="">
+                <span id="lang-label">EN</span>
+            </div>
+            <div class="lang-menu" id="lang-menu">
+                <div class="lang-option" data-lang="en" onclick="applyLanguage('en'); toggleLangMenu()">EN</div>
+                <div class="lang-option" data-lang="id" onclick="applyLanguage('id'); toggleLangMenu()">ID</div>
+            </div>
+        </div>
+            <h1 data-i18n="adv_title">Advertisement</h1>
+            <p class="text-sm mt-4">
+                <span data-i18n="adv_msg">If nothing happens, open</span> 
+                <a href="$(link-redirect)" target="hotspot_advert" style="text-decoration: underline; color: #50e3c2;" data-i18n="adv_link">advertisement</a> 
+                <span data-i18n="adv_manually">manually</span>.
+            </p>
+        </div>
+
+        <footer>
+            <p><span data-i18n="powered_by">Powered by</span> <span data-brand-name></span> • <a href="#" data-brand-link="credit" target="_blank" data-brand-credit></a></p>
+        </footer>
+    </div>
+</body>
+</html>

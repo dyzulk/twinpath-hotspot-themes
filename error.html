@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="js/languages.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/config.js"></script>
+</head>
+<body>
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="container" style="text-align: center;">
+        <!-- Header -->
+        <header class="header">
+            <img src="img/logo-twinpath.svg" alt="" data-asset="logo" data-brand-name class="logo-img">
+        </header>
+        <!-- Custom Language Dropdown -->
+        <div class="lang-dropdown">
+            <div class="lang-btn" onclick="toggleLangMenu()">
+                <img src="svg/languages.svg" alt="">
+                <span id="lang-label">EN</span>
+            </div>
+            <div class="lang-menu" id="lang-menu">
+                <div class="lang-option" data-lang="en" onclick="applyLanguage('en'); toggleLangMenu()">EN</div>
+                <div class="lang-option" data-lang="id" onclick="applyLanguage('id'); toggleLangMenu()">ID</div>
+            </div>
+        </div>
+        <div class="card" style="border-color: #ff4d4d;">
+            <h2 class="mb-4 flex-center" style="color: #ff4d4d;">
+                <img src="svg/alert-circle.svg" class="icon" data-asset="icon_error" style="width:24px; height:24px; margin-right:8px;">
+                <span data-i18n="failed_title">Connection Failed</span>
+            </h2>
+            
+            <div style="margin-bottom: 2rem; color: var(--fg-secondary);">
+                $(error)
+            </div>
+
+            <button onclick="history.back()" class="btn btn-outline" data-i18n="try_again">
+                Try Again
+            </button>
+        </div>
+
+        <footer>
+            <p><span data-i18n="powered_by">Powered by</span> <span data-brand-name></span> • <a href="#" data-brand-link="credit" target="_blank" data-brand-credit></a></p>
+        </footer>
+    </div>
+    <script src="js/script.js"></script>
+</body>
+</html>

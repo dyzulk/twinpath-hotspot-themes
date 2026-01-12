@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="js/languages.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="refresh" content="$(refresh-timeout-secs)">
+    <title>Status</title>
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/config.js"></script>
+    <script>
+        $(if advert-pending == 'yes')
+            var popup = '';
+            function focusAdvert() {
+                if (window.focus) popup.focus();
+            }
+            function openAdvert() {
+                popup = open('$(link-advert)', 'hotspot_advert', '');
+                setTimeout("focusAdvert()", 1000);
+            }
+        $(endif)
+
+    </script>
+</head>
+<body $(if advert-pending == 'yes') onLoad="openAdvert()" $(endif)>
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    <div class="container">
+        <!-- Custom Language Dropdown -->
+        <div class="lang-dropdown">
+            <div class="lang-btn" onclick="toggleLangMenu()">
+                <img src="svg/languages.svg" alt="">
+                <span id="lang-label">EN</span>
+            </div>
+            <div class="lang-menu" id="lang-menu">
+                <div class="lang-option" data-lang="en" onclick="applyLanguage('en'); toggleLangMenu()">EN</div>
+                <div class="lang-option" data-lang="id" onclick="applyLanguage('id'); toggleLangMenu()">ID</div>
+            </div>
+        </div>
+        <!-- Header -->
+        <header class="header">
+            <img src="img/logo-twinpath.svg" alt="" data-asset="logo" data-brand-name class="logo-img">
+            <div class="status-badge" style="border-color: #50e3c2; color: #50e3c2;">
+                ● <span data-i18n="online">Online</span>
+            </div>
+        </header>
+
+        <!-- Greeting Section -->
+        <div style="margin-bottom: 2rem;">
+            <h2 id="greeting-text" class="greeting-text">Welcome Back!</h2>
+            <p class="sub-greeting" data-i18n="status_dashboard_msg">Manage your active session and monitor your usage.</p>
+        </div>
+
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Time Info -->
+            <div class="dashboard-item">
+                <div class="label">
+                    <img src="svg/clock.svg" class="icon" style="width:14px; height:14px; margin-right:6px; opacity:0.7"> 
+                    <span data-i18n="time_left">Time Remaining</span>
+                </div>
+                <div class="value text-time" data-type="mikrotik-time">$(session-time-left)</div>
+                <div class="progress-container">
+                    <div class="progress-bar progress-time" style="width: 75%;"></div>
+                </div>
+            </div>
+
+            <!-- Quota Info -->
+            <div class="dashboard-item">
+                <div class="label">
+                    <img src="svg/ticket.svg" class="icon" style="width:14px; height:14px; margin-right:6px; opacity:0.7"> 
+                    <span data-i18n="quota_left">Sisa Kuota</span>
+                </div>
+                <div class="value text-quota active-glow">
+                    $(if remain-bytes-total)
+                        $(remain-bytes-total-nice)
+                    $(else)
+                        <span data-i18n="unlimited">Unlimited</span>
+                    $(endif)
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar progress-quota" style="width: 60%;"></div>
+                </div>
+            </div>
+
+            <!-- User Info -->
+            <div class="dashboard-item">
+                <div class="label">
+                    <img src="svg/user.svg" class="icon" style="width:14px; height:14px; margin-right:6px; opacity:0.7"> 
+                    User
+                </div>
+                <div class="value">$(username)</div>
+            </div>
+
+            <!-- IP Info -->
+            <div class="dashboard-item">
+                <div class="label">
+                    <img src="svg/wifi.svg" class="icon" style="width:14px; height:14px; margin-right:6px; opacity:0.7"> 
+                    IP Address
+                </div>
+                <div class="value">$(ip)</div>
+            </div>
+        </div>
+
+        <!-- Connection Stats Card -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+            <h3 class="mb-4" data-i18n="connection_stats">Connection Stats</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <div class="input-label">
+                        <img src="svg/upload-cloud.svg" class="icon" style="width:12px; height:12px; margin-right:4px; opacity:0.7"> 
+                        <span data-i18n="upload">Upload</span>
+                    </div>
+                    <div class="text-sm">$(bytes-in-nice)</div>
+                </div>
+                <div>
+                    <div class="input-label">
+                        <img src="svg/download-cloud.svg" class="icon" style="width:12px; height:12px; margin-right:4px; opacity:0.7"> 
+                        <span data-i18n="download">Download</span>
+                    </div>
+                    <div class="text-sm">$(bytes-out-nice)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: grid; gap: 0.75rem;">
+            <button type="button" class="btn btn-outline btn-disabled" style="border-color: rgba(255,255,255,0.1); color: var(--fg-secondary);">
+                <img src="svg/help-circle.svg" class="icon" style="margin-right:8px; width:16px; height:16px; opacity:0.5"> 
+                Help Center
+            </button>
+            <button type="button" onclick="location.href='$(link-logout)'" class="btn btn-outline" style="border-color: #ff4d4d; color: #ff4d4d;">
+                <img src="svg/log-out.svg" class="icon" style="margin-right:8px; width:16px; height:16px"> 
+                <span data-i18n="logout_btn">Log Out</span>
+            </button>
+        </div>
+
+        <footer>
+            <p><span data-i18n="powered_by">Powered by</span> <span data-brand-name></span> • <a href="#" data-brand-link="credit" target="_blank" data-brand-credit></a></p>
+        </footer>
+    </div>
+
+    <!-- Dashboard Data Bridge -->
+    <div id="dashboard-data" 
+         data-limit-uptime="$(limit-uptime)" 
+         data-limit-bytes="$(limit-bytes-total)"
+         data-uptime="$(uptime)"
+         data-bytes-out="$(bytes-out)"
+         style="display:none">
+    </div>
+
+    <script src="js/script.js"></script>
+</body>
+</html>

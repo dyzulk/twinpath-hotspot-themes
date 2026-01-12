@@ -1,0 +1,32 @@
+<svg width="242" height="50" viewBox="0 0 242 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#FFFFFF" />
+            <stop offset="100%" stop-color="#AAAAAA" />
+        </linearGradient>
+        <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+        </filter>
+    </defs>
+    
+    <!-- Left Bracket < -->
+    <!-- Distance to left edge: 33px -->
+    <!-- Leg: 43. Tip: 33. -->
+    <path d="M43 14 L33 25 L43 36" stroke="url(#textGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+
+    <!-- Text -->
+    <!-- Centered at 121 (Symmetric Center of 33 and 209) -->
+    <text x="121" y="32" font-family="'Geist Sans', 'Inter', -apple-system, sans-serif" font-weight="700" font-size="22" text-anchor="middle" fill="url(#textGrad)" letter-spacing="-0.5px">
+        TwinpathNet
+    </text>
+
+    <!-- Slash / -->
+    <!-- Positioned relative to right bracket -->
+    <line x1="196" y1="14" x2="188" y2="36" stroke="url(#textGrad)" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+
+    <!-- Right Bracket > -->
+    <!-- Distance to right edge: 33px (242 - 209 = 33) -->
+    <!-- Leg: 199. Tip: 209. -->
+    <path d="M199 14 L209 25 L199 36" stroke="url(#textGrad)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
+</svg>
